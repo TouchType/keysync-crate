@@ -46,9 +46,9 @@
     (sut/add-user! bs "test-group-3" "user-4" "key4")
 
     (let [auth-1 (sut/authorized-keys bs "test-group-1")]
-      (is (re-find #"key1\n" auth-1))
-      (is (re-find #"key2\n" auth-1))
-      (is (not (re-find #"key[34]\n" auth-1))))
+      (is (re-find #"key1" auth-1))
+      (is (re-find #"key2" auth-1))
+      (is (not (re-find #"key[34]" auth-1))))
 
     (let [auth-1-2 (sut/authorized-keys bs "test-group-1" "test-group-2")
           keys-1-2 (.split auth-1-2 "\n")]

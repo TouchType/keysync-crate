@@ -5,6 +5,7 @@
    bucket for storing user public keys."
   (:require [clojure.edn :as edn]
             [clojure.set :as set]
+            [clojure.string :as str]
             [clojure.java.io :as io]
             [org.jclouds.blobstore2 :as blob])
   (:import  [java.io PushbackReader]))
@@ -100,12 +101,23 @@
     (with-check-group-exists blobstore group
       (into #{} (keys (read-edn blobstore group))))))
 
+(defn- format-keys
+  [& public-keys]
+  (str/join "\n" (map str/trim-newline public-keys)))
+
+(defn- get-keys
+  [blobstore group]
+  (with-check-group-exists blobstore group
+    (vals (read-edn blobstore group))))
+
 (defn authorized-keys
   "Return a string containing the content for an OpenSSH
    authorized_keys file, authorizing users of the requested
    groups."
   [blobstore & groups]
-  "")
+  (with-keysync-container blobstore
+   (apply format-keys
+          (into #{} (mapcat (partial get-keys blobstore) groups)))))
 
 (defn revoke-all!
   "Revoke access to all groups for these users.
@@ -114,4 +126,10 @@
           need to run the appropriate phase on any deployed nodes
           for this to take effect!"
   [blobstore & users]
-  nil)
+  (with-keysync-container blobstore
+    (doseq [g (list-groups blobstore)]
+      (swap-edn! blobstore g
+                 (fn [user-group]
+                   (select-keys user-group
+                                (set/difference (set (keys user-group))
+                                                (set users))))))))

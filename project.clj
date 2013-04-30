@@ -2,6 +2,8 @@
   :description "Pallet Crate to install public keys to created nodes,
                 from some shared blobstore."
 
+  :url "https://github.com/TouchType/keysync-crate"
+
   :license {:name "Eclipse Public License"
             :url  "http://www.eclipse.org/legal/epl-v10.html"}
 

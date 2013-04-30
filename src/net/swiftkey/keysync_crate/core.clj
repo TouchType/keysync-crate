@@ -18,16 +18,14 @@
    (File. (.getParent (File. (:public-key-path user)))
           "authorized_keys")))
 
-
 (defplan authorize-groups
   "Authorize the given groups to be authenticated by their public
    keys for the given user account (defaults to current admin user)."
   [groups & {:keys [user blobstore]
              :or   {user (crate/admin-user)
                     blobstore (config/blobstore-service)}}]
-  (-> session
-      (remote-file (user-auth-file-path user)
-                   :content (apply group/authorized-keys blobstore groups)
-                   :force true
-                   :mode "644"
-                   :owner user)))
+  (remote-file (user-auth-file-path user)
+               :content (apply group/authorized-keys blobstore groups)
+               :force true
+               :mode "644"
+               :owner user))

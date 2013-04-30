@@ -7,7 +7,7 @@
    user on created nodes."
   (:require [pallet.crate :refer [defplan] :as crate]
             [pallet.actions :refer [remote-file]]
-            [pallet.configure :as config]
+            [pallet.core.session :refer [session]]
             [net.swiftkey.keysync-crate.group :as group])
   (:import  [java.io File]))
 
@@ -23,9 +23,10 @@
    keys for the given user account (defaults to current admin user)."
   [groups & {:keys [user blobstore]
              :or   {user (crate/admin-user)
-                    blobstore (config/blobstore-service)}}]
+                    blobstore (-> (session) :environment :blobstore)}}]
+  {:pre [(coll? groups)]}
   (remote-file (user-auth-file-path user)
                :content (apply group/authorized-keys blobstore groups)
                :force true
                :mode "644"
-               :owner user))
+               :owner (:username user)))

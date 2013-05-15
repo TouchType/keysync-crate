@@ -20,13 +20,14 @@
 
 (defplan authorize-groups
   "Authorize the given groups to be authenticated by their public
-   keys for the given user account (defaults to current admin user)."
-  [groups & {:keys [user blobstore]
-             :or   {user (crate/admin-user)
-                    blobstore (-> (session) :environment :blobstore)}}]
+   keys for the given user account (defaults to current admin user).
+   `container` should be a string - the container name to look up groups in."
+  [container groups & {:keys [user blobstore]
+                       :or   {user (crate/admin-user)
+                              blobstore (-> (session) :environment :blobstore)}}]
   {:pre [(coll? groups)]}
   (remote-file (user-auth-file-path user)
-               :content (apply group/authorized-keys blobstore groups)
+               :content (apply group/authorized-keys blobstore container groups)
                :force true
                :mode "644"
                :owner (:username user)))

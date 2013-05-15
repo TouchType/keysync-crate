@@ -10,7 +10,7 @@ a single Plan function to synchonrize the keys onto the node in an
 
 The crate is in Clojars, so:
 
-    [net.swiftkey/keysync-crate "0.8.0-SNAPSHOT"]
+    [net.swiftkey/keysync-crate "0.8.1-SNAPSHOT"]
 
 We'll try to make sure the version numbers align well enough with Pallet that
 it should be obvious which version of Pallet it's compatible with.
@@ -32,13 +32,13 @@ some bulk operations. Here's a quick walkthrough:
 (require '[net.swiftkey.keysync-crate.group :as group])
 
 ;; Create a group
-(group/add-group! bs "admins")
-(group/add-group! bs "special")
+(group/add-group! bs "my-container" "admins")
+(group/add-group! bs "my-container" "special")
 
 ;; Add some users
-(group/add-user! bs "admins" "jeremy" "<ssh public key as string>")
-(group/add-user! bs "admins" "charles" "<ssh public key as string>")
-(group/add-user! bs "special-guys" "bill" "<ssh public key as string>")
+(group/add-user! bs "my-container" "admins" "jeremy" "<ssh public key as string>")
+(group/add-user! bs "my-container" "admins" "charles" "<ssh public key as string>")
+(group/add-user! bs "my-container" "special" "bill" "<ssh public key as string>")
 ```
 
 You get the idea! There are also functions to remove groups, remove
@@ -58,7 +58,7 @@ to install a selection of the keys to the node.
   (group-spec "my-group-spec"
     :phases {:bootstrap (plan-fn (automated-admin-user))
              :keysync   (plan-fn
-                          (keysync/authorize-groups "admins" "special"))}))
+                          (keysync/authorize-groups  "my-container" "admins" "special"))}))
 ```
 
 Running the `:keysync` phase will overwrite the `authorized_keys` for the admin

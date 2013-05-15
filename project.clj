@@ -1,4 +1,4 @@
-(defproject net.swiftkey/keysync-crate "0.8.0-SNAPSHOT"
+(defproject net.swiftkey/keysync-crate "0.8.1-SNAPSHOT"
   :description "Pallet Crate to install public keys to created nodes,
                 from some shared blobstore."
 
